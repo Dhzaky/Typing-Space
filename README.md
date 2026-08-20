@@ -1,0 +1,1 @@
+ini hanya tugas sekolah
