@@ -218,6 +218,8 @@ function startTimer() {
         let botPercent = (timeElapsed / 60) * (40 / maxTrackWPM) * 100;
         botShip.style.left = Math.min(botPercent, 90) + '%';
         
+        updateStats(); 
+        
         if(timer <= 0) {
             endGame();
         }
