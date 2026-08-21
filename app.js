@@ -14,7 +14,7 @@ sfxFinish.volume = 0.8;
 function playSound(audioElement) {
     if (!audioElement) return;
     audioElement.currentTime = 0;
-    audioElement.play().catch(e => console.log("Audio play blocked by browser:", e));
+    audioElement.play().catch(e => console.log(e));
 }
 
 function createStars() {
@@ -64,6 +64,10 @@ const botShip = document.getElementById('bot-ship');
 const modal = document.getElementById('result-modal');
 const typingBox = document.getElementById('typing-box');
 const restartBtn = document.getElementById('btn-restart');
+const highScoreDisplay = document.getElementById('high-score-display');
+
+let highScore = localStorage.getItem('spaceTypeHighScore') || 0;
+highScoreDisplay.innerText = highScore;
 
 restartBtn.addEventListener('click', initGame);
 
@@ -207,7 +211,7 @@ function scrollWords() {
 function startTimer() {
     isPlaying = true;
     
-    bgm.play().catch(e => console.log("BGM play blocked:", e));
+    bgm.play().catch(e => console.log(e));
     
     interval = setInterval(() => {
         timer--;
@@ -251,6 +255,12 @@ function endGame() {
     
     let finalWpm = Math.round(correctChars / 5);
     let accuracy = totalKeystrokes > 0 ? Math.round((correctChars / totalKeystrokes) * 100) : 0;
+    
+    if (finalWpm > highScore) {
+        highScore = finalWpm;
+        localStorage.setItem('spaceTypeHighScore', highScore);
+        highScoreDisplay.innerText = highScore;
+    }
     
     document.getElementById('final-wpm').innerText = finalWpm;
     document.getElementById('final-accuracy').innerText = accuracy + '%';
