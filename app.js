@@ -117,8 +117,17 @@ function generateWords() {
     wordsDiv.childNodes[0].classList.add('active');
 }
 
-typingBox.addEventListener('click', () => input.focus());
-document.addEventListener('keydown', () => input.focus());
+typingBox.addEventListener('click', () => {
+    input.focus();
+});
+
+typingBox.addEventListener('touchstart', () => {
+    input.focus();
+});
+
+document.addEventListener('keydown', () => {
+    input.focus();
+});
 
 input.addEventListener('input', (e) => {
     if(!isPlaying) {
