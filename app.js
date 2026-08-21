@@ -54,6 +54,7 @@ let charIndex = 0;
 let wordIndex = 0;
 let correctChars = 0;
 let totalKeystrokes = 0;
+let isBgmPlaying = false;
 
 const wordsDiv = document.getElementById('words');
 const input = document.getElementById('hidden-input');
@@ -92,8 +93,11 @@ function initGame() {
     
     sfxFinish.pause();
     sfxFinish.currentTime = 0;
-    bgm.pause();
-    bgm.currentTime = 0;
+    
+    if (isBgmPlaying) {
+        bgm.currentTime = 0;
+        bgm.play().catch(e => console.log(e));
+    }
     
     generateWords();
 }
@@ -133,6 +137,20 @@ document.addEventListener('keydown', () => {
     input.focus();
 });
 
+function playBgmOnce() {
+    if (!isBgmPlaying) {
+        bgm.play().catch(e => console.log(e));
+        isBgmPlaying = true;
+        document.removeEventListener('click', playBgmOnce);
+        document.removeEventListener('touchstart', playBgmOnce);
+        document.removeEventListener('keydown', playBgmOnce);
+    }
+}
+
+document.addEventListener('click', playBgmOnce);
+document.addEventListener('touchstart', playBgmOnce);
+document.addEventListener('keydown', playBgmOnce);
+
 input.addEventListener('input', (e) => {
     if(!isPlaying) {
         startTimer();
@@ -152,6 +170,8 @@ input.addEventListener('input', (e) => {
 
     if(typedChar === ' ') {
         if(charIndex > 0) {
+            playSound(sfxCorrect);
+            
             currentWord.classList.remove('active');
             
             for(let i = charIndex; i < chars.length; i++) {
@@ -177,7 +197,6 @@ input.addEventListener('input', (e) => {
         if(typedChar === expectedChar) {
             chars[charIndex].classList.add('correct');
             correctChars++;
-            playSound(sfxCorrect);
         } else {
             chars[charIndex].classList.add('incorrect');
             playSound(sfxWrong);
@@ -210,8 +229,6 @@ function scrollWords() {
 
 function startTimer() {
     isPlaying = true;
-    
-    bgm.play().catch(e => console.log(e));
     
     interval = setInterval(() => {
         timer--;
@@ -251,6 +268,7 @@ function endGame() {
     input.disabled = true;
     
     bgm.pause();
+    isBgmPlaying = false;
     playSound(sfxFinish);
     
     let finalWpm = Math.round(correctChars / 5);
